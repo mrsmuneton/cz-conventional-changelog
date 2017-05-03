@@ -73,7 +73,18 @@ module.exports = function (options) {
         }, {
           type: 'input',
           name: 'issues',
-          message: 'List any issues closed by this change:\n'
+          message: 'List User Stories or Defects completes by this change::\n',
+          validate: function (input) {
+            if (!input) {
+                return false;
+            } else {
+                return true;
+            }
+          }
+        }, {
+          type: 'input',
+          name: 'footer',
+          message: 'Specify Any Dependencies:\n'
         }
       ]).then(function(answers) {
 
@@ -101,9 +112,10 @@ module.exports = function (options) {
         breaking = breaking ? 'BREAKING CHANGE: ' + breaking.replace(/^BREAKING CHANGE: /, '') : '';
         breaking = wrap(breaking, wrapOptions);
 
-        var issues = wrap(answers.issues, wrapOptions);
+        var issues = 'Completes: ' + wrap(answers.issues, wrapOptions);
+        var dependencies = answers.footer ? 'Dependencies: ' + answers.footer : '';
 
-        var footer = filter([ breaking, issues ]).join('\n\n');
+        var footer = filter([ breaking, issues, dependencies ]).join('\n');
 
         commit(head + '\n\n' + body + '\n\n' + footer);
       });
